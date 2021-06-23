@@ -66,6 +66,7 @@ def _handle_training(ctx: Context) -> None:
         rp.vector2((402, 700), 466),
     ):
         action.drag((x, y - dy), dy=dy)
+        time.sleep(0.5)  # wait cursor effect finish
         action.wait_image(_TRAINING_CONFIRM)
         t = Training.from_training_scene(template.screenshot())
         trainings.append(t)
@@ -87,11 +88,15 @@ def _handle_training(ctx: Context) -> None:
         LOGGER.info("score:\trace:\t%2.2f:\t%s", s, r)
     for t, s in trainings_with_score:
         LOGGER.info("score:\ttraining:\t%2.2f:\t%s", s, t)
-    training, score = trainings_with_score[0]
+    training, training_score = trainings_with_score[0]
 
     if races_with_score:
         r, s = races_with_score[0]
-        if s > expected_score and (s > score or ctx.fan_count < ctx.target_fan_count):
+        if (s > expected_score and s > training_score) or (
+            ctx.fan_count < ctx.target_fan_count
+            and r.fan_counts[r.estimate_order(ctx) - 1]
+            > (ctx.target_fan_count - ctx.fan_count) * 0.4
+        ):
             # go to race
             action.wait_click_image(templates.RETURN_BUTTON)
             action.wait_click_image(templates.SINGLE_MODE_COMMAND_RACE)
@@ -113,7 +118,7 @@ def _handle_training(ctx: Context) -> None:
             _handle_race(ctx, r)
             return
 
-    if score < expected_score:
+    if training_score < expected_score:
         # not worth, go rest
         action.click_image(templates.RETURN_BUTTON)
         action.wait_image(templates.SINGLE_MODE_COMMAND_TRAINING)
