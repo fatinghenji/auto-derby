@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import Tuple, Type
+from typing import Dict, Tuple, Type
 
 import cv2
 import numpy as np
@@ -13,10 +13,12 @@ from PIL.Image import fromarray as image_from_array
 
 from .. import ocr, template, templates, mathtools
 from .context import Context
+import cast_unknown as cast
 
 
 class g:
     training_class: Type[Training]
+    target_levels: Dict[int, int] = {}
 
 
 def _gradient(colors: Tuple[Tuple[Tuple[int, int, int], int], ...]) -> np.ndarray:
@@ -111,12 +113,43 @@ def _ocr_training_effect(img: Image) -> int:
     return int(text.lstrip("+"))
 
 
+def _recognize_level(rgb_color: Tuple[int, ...]) -> int:
+    if imagetools.compare_color((49, 178, 22), rgb_color) > 0.9:
+        return 1
+    if imagetools.compare_color((46, 139, 244), rgb_color) > 0.9:
+        return 2
+    if imagetools.compare_color((255, 134, 0), rgb_color) > 0.9:
+        return 3
+    if imagetools.compare_color((244, 69, 132), rgb_color) > 0.9:
+        return 4
+    if imagetools.compare_color((165, 78, 255), rgb_color) > 0.9:
+        return 5
+    raise ValueError("_recognize_level: unknown level color: %s" % (rgb_color,))
+
+
 class Training:
+    TYPE_SPEED: int = 1
+    TYPE_STAMINA: int = 2
+    TYPE_POWER: int = 3
+    TYPE_GUTS: int = 4
+    TYPE_WISDOM: int = 5
+
+    ALL_TYPES = (
+        TYPE_SPEED,
+        TYPE_STAMINA,
+        TYPE_POWER,
+        TYPE_GUTS,
+        TYPE_WISDOM,
+    )
+
     @staticmethod
     def new() -> Training:
         return g.training_class()
 
     def __init__(self):
+        self.level = 0
+        self.type = 0
+
         self.speed: int = 0
         self.stamina: int = 0
         self.power: int = 0
@@ -129,6 +162,8 @@ class Training:
 
     @classmethod
     def from_training_scene(cls, img: Image) -> Training:
+        rp = mathtools.ResizeProxy(img.width)
+
         self = cls.new()
         self.confirm_position = next(
             template.match(
@@ -138,8 +173,28 @@ class Training:
                 ),
             )
         )[1]
+        radius = rp.vector(30, 540)
+        for t, center in zip(
+            Training.ALL_TYPES,
+            (
+                rp.vector2((78, 850), 540),
+                rp.vector2((171, 850), 540),
+                rp.vector2((268, 850), 540),
+                rp.vector2((367, 850), 540),
+                rp.vector2((461, 850), 540),
+            ),
+        ):
+            if mathtools.distance(self.confirm_position, center) < radius:
+                self.type = t
+                break
+        else:
+            raise ValueError(
+                "unknown type for confirm position: %s" % self.confirm_position
+            )
 
-        rp = mathtools.ResizeProxy(img.width)
+        self.level = _recognize_level(
+            tuple(cast.list_(img.getpixel(rp.vector2((10, 200), 540)), int))
+        )
 
         t, b = 503, 532
         self.speed = _ocr_training_effect(img.crop(rp.vector4((18, t, 91, b), 466)))
@@ -162,7 +217,8 @@ class Training:
         )
         return (
             "Training<"
-            + ", ".join(
+            f"lv={self.level} "
+            + " ".join(
                 (
                     f"{name}={value}"
                     for name, value in sorted(
@@ -244,7 +300,27 @@ class Training:
                 (7000, 1.0),
             ),
         )
-        return (spd + sta + pow + per + int_ + skill) * success_rate
+
+        target_level = g.target_levels.get(self.type, self.level)
+        target_level_score = 0
+        if ctx.is_summer_camp:
+            pass
+        elif self.level < target_level:
+            target_level_score += mathtools.interpolate(
+                ctx.turn_count(),
+                (
+                    (0, 5),
+                    (24, 3),
+                    (48, 2),
+                    (72, 0),
+                ),
+            )
+        elif self.level > target_level:
+            target_level_score -= (self.level - target_level) * 5
+
+        return (
+            spd + sta + pow + per + int_ + skill + target_level_score
+        ) * success_rate
 
 
 g.training_class = Training
