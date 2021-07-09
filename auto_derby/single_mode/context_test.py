@@ -108,6 +108,20 @@ def test_update_by_command_scene_6():
         assert ctx.mood == ctx.MOOD_VERY_GOOD, ctx.mood
 
 
+def test_update_by_command_scene_7():
+    with _test.screenshot("command_scene_7.png") as img:
+        ctx = Context.new()
+        ctx.update_by_command_scene(img)
+        assert ctx.date == (2, 12, 2), ctx.date
+        assert round(ctx.vitality, 2) == 0.33, ctx.vitality
+        assert ctx.speed == 615, ctx.speed
+        assert ctx.stamina == 316, ctx.stamina
+        assert ctx.power == 459, ctx.power
+        assert ctx.guts == 251, ctx.guts
+        assert ctx.wisdom == 382, ctx.wisdom
+        assert ctx.mood == ctx.MOOD_VERY_GOOD, ctx.mood
+
+
 def test_update_by_command_scene_issue7():
     img = (
         PIL.Image.open(_TEST_DATA_PATH / "command_scene_issue7.png")
@@ -305,6 +319,14 @@ def test_update_by_class_detail_issue35_2():
     ctx = Context.new()
     ctx.update_by_class_detail(img)
     assert ctx.fan_count == 4119, ctx.fan_count
+    assert ctx.is_after_winning == True, ctx.is_after_winning
+
+
+def test_update_by_class_detail_issue86():
+    with _test.screenshot("class_detail_issue86.png") as img:
+        ctx = Context.new()
+        ctx.update_by_class_detail(img)
+    assert ctx.fan_count == 88556, ctx.fan_count
     assert ctx.is_after_winning == True, ctx.is_after_winning
 
 

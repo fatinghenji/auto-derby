@@ -2,12 +2,39 @@
 # pyright: strict
 
 
+from typing import Dict, Text
+from auto_derby.single_mode.training import Training
 import os
 
 from auto_derby import plugin
 
 from . import ocr, single_mode, template, window
 from .clients import ADBClient
+
+import warnings
+
+
+def _parse_training_levels(spec: Text) -> Dict[int, int]:
+    ret: Dict[int, int] = {}
+    for k, v in zip(
+        (
+            Training.TYPE_SPEED,
+            Training.TYPE_STAMINA,
+            Training.TYPE_POWER,
+            Training.TYPE_GUTS,
+            Training.TYPE_WISDOM,
+        ),
+        spec.split(","),
+    ):
+        if not v:
+            continue
+        ret[k] = int(v)
+        if ret[k] > 6:
+            warnings.warn(
+                "target training level greater than 6 has same effect as 6",
+                RuntimeWarning,
+            )
+    return ret
 
 
 class config:
@@ -32,10 +59,18 @@ class config:
     single_mode_race_class = single_mode.Race
     single_mode_training_class = single_mode.Training
     single_mode_context_class = single_mode.Context
+    single_mode_target_training_levels = _parse_training_levels(
+        os.getenv("AUTO_DERBY_SINGLE_MODE_TARGET_TRAINING_LEVELS", "")
+    )
     use_legacy_screenshot = (
         os.getenv("AUTO_DERBY_USE_LEGACY_SCREENSHOT", "").lower() == "true"
     )
     adb_key_path = os.getenv("AUTO_DERBY_ADB_KEY_PATH", ADBClient.key_path)
+
+    on_limited_sale = lambda: window.pause(
+        "Please handle limited shop manually before confirm in terminal.\n"
+        "You can also try `limited_sale_buy_everything` plugin."
+    )
 
     @classmethod
     def apply(cls) -> None:
@@ -49,6 +84,7 @@ class config:
         single_mode.race.g.data_path = cls.single_mode_race_data_path
         single_mode.race.g.race_class = cls.single_mode_race_class
         single_mode.training.g.training_class = cls.single_mode_training_class
+        single_mode.training.g.target_levels = cls.single_mode_target_training_levels
         template.g.last_screenshot_save_path = cls.last_screenshot_save_path
         window.g.use_legacy_screenshot = cls.use_legacy_screenshot
 

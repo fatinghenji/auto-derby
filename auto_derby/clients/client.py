@@ -26,18 +26,13 @@ class Client(ABC):
 
     # TODO: rename to tap
     @abstractmethod
-    def click(self, point: Tuple[int, int]) -> None:
+    def tap(self, point: Tuple[int, int]) -> None:
         ...
 
-    # TODO: refactor wheel and drag to swipe
     @abstractmethod
-    def drag(
+    def swipe(
         self, point: Tuple[int, int], *, dx: int, dy: int, duration: float = 1
     ) -> None:
-        ...
-
-    @abstractmethod
-    def wheel(self, point: Tuple[int, int], delta: int) -> None:
         ...
 
 

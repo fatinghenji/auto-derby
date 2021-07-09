@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import Set, Text, Tuple, Type
+from typing import Callable, List, Set, Text, Tuple, Type
 
 import cast_unknown as cast
 import cv2
@@ -28,7 +28,7 @@ def _ocr_date(img: Image) -> Tuple[int, int, int]:
     )
     sharpened_img = imagetools.sharpen(cv_img)
     sharpened_img = imagetools.mix(sharpened_img, cv_img, 0.5)
-    _, binary_img = cv2.threshold(sharpened_img, 100, 255, cv2.THRESH_BINARY_INV)
+    _, binary_img = cv2.threshold(sharpened_img, 120, 255, cv2.THRESH_BINARY_INV)
     imagetools.fill_area(binary_img, (0,), size_lt=2)
 
     if os.getenv("DEBUG") == __name__:
@@ -237,12 +237,19 @@ class Context:
         # ・追込：最後方に控え、最後に勝負をかける作戦。
         self.last = Context.STATUS_NONE
 
+        self._next_turn_cb: List[Callable[[], None]] = []
+
     def next_turn(self) -> None:
         if self.date in ((1, 0, 0), (4, 0, 0)):
             self._extra_turn_count += 1
         else:
             self._extra_turn_count = 0
-        self.target_fan_count = 0
+
+        while self._next_turn_cb:
+            self._next_turn_cb.pop()()
+
+    def defer_next_turn(self, cb: Callable[[], None]) -> None:
+        self._next_turn_cb.append(cb)
 
     def update_by_command_scene(self, screenshot: Image) -> None:
         rp = mathtools.ResizeProxy(screenshot.width)
@@ -357,11 +364,14 @@ class Context:
             turn -= 1
         return ret
 
+    @property
+    def is_summer_camp(self) -> bool:
+        return self.date[1:] in ((7, 1), (7, 2), (8, 1))
+
     def expected_score(self) -> float:
         expected_score = 15 + self.turn_count() * 10 / 24
 
-        is_summer_camp = self.date[1:] in ((7, 1), (7, 2), (8, 1))
-        can_heal_condition = not is_summer_camp
+        can_heal_condition = not self.is_summer_camp
         if self.vitality > 0.5:
             expected_score *= 0.5
         if self.turn_count() >= self.total_turn_count() - 2:
@@ -370,7 +380,7 @@ class Context:
             expected_score += 10
         if self.date[1:] in ((6, 2),) and self.vitality < 0.9:
             expected_score += 20
-        if is_summer_camp and self.vitality < 0.8:
+        if self.is_summer_camp and self.vitality < 0.8:
             expected_score += 10
         if self.date in ((4, 0, 0)):
             expected_score -= 20
