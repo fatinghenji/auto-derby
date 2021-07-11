@@ -6,7 +6,7 @@ import logging
 import time
 from typing import List, Optional
 
-from .. import action, template, templates, config, imagetools, terminal 
+from .. import action, template, templates, config, imagetools, terminal
 from ..single_mode import Context, Training, choice, race
 import cast_unknown as cast
 
@@ -59,7 +59,7 @@ def _choose_race(ctx: Context, race1: race.Race) -> None:
         action.swipe(
             rp.vector2((100, 600), 466),
             dy=rp.vector(-50, 466),
-            duration=0.2,
+            duration=0.5,
         )
 
 
