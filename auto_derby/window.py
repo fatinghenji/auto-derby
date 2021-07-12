@@ -145,6 +145,8 @@ def drag_at(
     x, y = win32gui.ClientToScreen(h_wnd, point)
     with topmost(h_wnd), recover_foreground(), recover_cursor():
         mouse.drag(x, y, x + dx, y + dy, duration=duration)
+        move_at(h_wnd, (-1, -1))
+        time.sleep(0.05)
 
 
 def wheel_at(h_wnd: int, delta: int) -> None:

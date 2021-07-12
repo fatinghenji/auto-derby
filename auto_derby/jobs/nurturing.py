@@ -7,7 +7,7 @@ import time
 from typing import List, Optional
 
 from .. import action, template, templates, config, imagetools, terminal
-from ..single_mode import Context, Training, choice, race
+from ..single_mode import Context, Training, choice, race, go_out
 import cast_unknown as cast
 
 
@@ -59,7 +59,7 @@ def _choose_race(ctx: Context, race1: race.Race) -> None:
         action.swipe(
             rp.vector2((100, 600), 466),
             dy=rp.vector(-50, 466),
-            duration=0.5,
+            duration=0.2,
         )
 
 
@@ -68,15 +68,21 @@ def _handle_training(ctx: Context) -> None:
     trainings: List[Training] = []
 
     action.wait_image(_TRAINING_CONFIRM)
-    dy = rp.vector(100, 466)
-    for x, y in (
-        rp.vector2((78, 700), 466),
-        rp.vector2((158, 700), 466),
-        rp.vector2((234, 700), 466),
-        rp.vector2((314, 700), 466),
-        rp.vector2((402, 700), 466),
+    trainings.append(Training.from_training_scene(template.screenshot()))
+
+    for t, pos in zip(
+        Training.ALL_TYPES,
+        (
+            rp.vector2((78, 850), 540),
+            rp.vector2((171, 850), 540),
+            rp.vector2((268, 850), 540),
+            rp.vector2((367, 850), 540),
+            rp.vector2((461, 850), 540),
+        ),
     ):
-        action.swipe((x, y - dy), dy=dy)
+        if t in (i.type for i in trainings):
+            continue
+        action.tap(pos)
         time.sleep(0.5)  # wait cursor effect finish
         action.wait_image(_TRAINING_CONFIRM)
         t = Training.from_training_scene(template.screenshot())
@@ -155,6 +161,18 @@ def _handle_training(ctx: Context) -> None:
             )
             action.tap(pos)
             action.wait_image_disappear(tmpl)
+        time.sleep(0.5)
+        if action.count_image(templates.SINGLE_MODE_GO_OUT_MENU_TITLE):
+            options_with_score = sorted(
+                [
+                    (i, i.score(ctx))
+                    for i in go_out.Option.from_menu(template.screenshot())
+                ],
+                key=lambda x: x[1],
+            )
+            for option, score in options_with_score:
+                LOGGER.info("go out option:\t%s:\tscore:%.2f", option, score)
+            action.tap(options_with_score[0][0].position)
         return
     x, y = training.confirm_position
     drag_y = rp.vector(100, 466)
@@ -286,6 +304,7 @@ def nurturing():
             templates.RETRY_BUTTON,
             templates.SINGLE_MODE_COMMAND_TRAINING,
             templates.SINGLE_MODE_FANS_NOT_ENOUGH,
+            templates.SINGLE_MODE_TARGET_RACE_NO_PERMISSION,
             templates.SINGLE_MODE_FINISH_BUTTON,
             templates.SINGLE_MODE_FORMAL_RACE_BANNER,
             templates.SINGLE_MODE_RACE_NEXT_BUTTON,
@@ -297,7 +316,10 @@ def nurturing():
         name = tmpl.name
         if name == templates.CONNECTING:
             pass
-        elif name == templates.SINGLE_MODE_FANS_NOT_ENOUGH:
+        elif name in (
+            templates.SINGLE_MODE_FANS_NOT_ENOUGH,
+            templates.SINGLE_MODE_TARGET_RACE_NO_PERMISSION,
+        ):
 
             def _set_target_fan_count():
                 ctx.target_fan_count = max(ctx.fan_count + 1, ctx.target_fan_count)
