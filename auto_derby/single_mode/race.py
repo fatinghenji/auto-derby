@@ -6,6 +6,7 @@ import json
 import logging
 import math
 import os
+import warnings
 from typing import Any, Dict, Iterator, Set, Text, Tuple, Type
 
 import cast_unknown as cast
@@ -26,9 +27,36 @@ class g:
     race_class: Type[Race]
 
 
-def reload() -> None:
+class _g:
+    loaded_data_path = ""
+
+
+def _iter_races():
+    with open(g.data_path, "r", encoding="utf-8") as f:
+        for line in f:
+            yield Race.new().from_dict(json.loads(line))
+
+
+def _load_legacy_json():
+    warnings.warn(
+        "json race data support will be removed at next major version, use jsonl instead",
+        DeprecationWarning,
+    )
     with open(g.data_path, "r", encoding="utf-8") as f:
         g.races = tuple(Race.new().from_dict(i) for i in json.load(f))
+
+
+def reload() -> None:
+    if g.data_path.endswith(".json"):
+        _load_legacy_json()
+        return
+    g.races = tuple(_iter_races())
+    _g.loaded_data_path = g.data_path
+
+
+def reload_on_demand() -> None:
+    if _g.loaded_data_path != g.data_path:
+        reload()
 
 
 def _running_style_single_score(
@@ -423,15 +451,15 @@ class Race:
 
     def to_dict(self) -> Dict[Text, Any]:
         return {
-            "name": self.name,
             "stadium": self.stadium,
+            "name": self.name,
+            "grade": self.grade,
+            "ground": self.ground,
+            "distance": self.distance,
             "permission": self.permission,
             "month": self.month,
             "half": self.half,
-            "grade": self.grade,
             "entryCount": self.entry_count,
-            "distance": self.distance,
-            "ground": self.ground,
             "track": self.track,
             "turn": self.turn,
             "targetStatuses": self.target_statuses,
@@ -661,6 +689,7 @@ g.race_class = Race
 
 
 def find_by_date(date: Tuple[int, int, int]) -> Iterator[Race]:
+    reload_on_demand()
     year, month, half = date
     for i in g.races:
         if year not in i.years:

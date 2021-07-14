@@ -44,7 +44,7 @@ class config:
     CHECK_UPDATE = os.getenv("AUTO_DERBY_CHECK_UPDATE", "").lower() == "true"
 
     single_mode_race_data_path = os.getenv(
-        "AUTO_DERBY_SINGLE_MODE_RACE_DATA_PATH", "single_mode_races.json"
+        "AUTO_DERBY_SINGLE_MODE_RACE_DATA_PATH", "single_mode_races.jsonl"
     )
     ocr_data_path = os.getenv("AUTO_DERBY_OCR_LABEL_PATH", "ocr_labels.json")
     ocr_image_path = os.getenv("AUTO_DERBY_OCR_IMAGE_PATH", "")
@@ -52,6 +52,9 @@ class config:
     pause_if_race_order_gt = int(os.getenv("AUTO_DERBY_PAUSE_IF_RACE_ORDER_GT", "5"))
     single_mode_event_image_path = os.getenv(
         "AUTO_DERBY_SINGLE_MODE_EVENT_IMAGE_PATH", ""
+    )
+    single_mode_training_image_path = os.getenv(
+        "AUTO_DERBY_SINGLE_MODE_TRAINING_IMAGE_PATH", ""
     )
     single_mode_choice_path = os.getenv(
         "AUTO_DERBY_SINGLE_MODE_CHOICE_PATH", "single_mode_choices.json"
@@ -75,6 +78,7 @@ class config:
     )
 
     on_single_mode_live: Callable[[single_mode.Context], None] = lambda *_: None
+    on_single_mode_crane_game: Callable[[single_mode.Context], None] = lambda *_: None
 
     terminal_pause_sound_path = os.path.expandvars(
         "${WinDir}/Media/Windows Background.wav"
@@ -93,16 +97,13 @@ class config:
         single_mode.go_out.g.option_class = cls.single_mode_go_out_option_class
         single_mode.race.g.data_path = cls.single_mode_race_data_path
         single_mode.race.g.race_class = cls.single_mode_race_class
+        single_mode.training.g.image_path = cls.single_mode_training_image_path
         single_mode.training.g.target_levels = cls.single_mode_target_training_levels
         single_mode.training.g.training_class = cls.single_mode_training_class
         template.g.last_screenshot_save_path = cls.last_screenshot_save_path
-        window.g.use_legacy_screenshot = cls.use_legacy_screenshot
         terminal.g.pause_sound_path = cls.terminal_pause_sound_path
         terminal.g.prompt_sound_path = cls.terminal_prompt_sound_path
-
-        ocr.reload()
-        single_mode.choice.reload()
-        single_mode.race.reload()
+        window.g.use_legacy_screenshot = cls.use_legacy_screenshot
 
 
 config.apply()

@@ -5,8 +5,12 @@ __pycache__
 
 .vscode/*
 !.vscode/cspell.json
+!.vscode/extensions.json
+!.vscode/*.example.json
 
 *.log
 *.log.*
+*~
 
 single_mode_choices.json
+single_mode_choices.csv
