@@ -167,12 +167,25 @@ namespace NateScarlet.AutoDerby
         {
             get
             {
-                return (int)key.GetValue("Debug", 0) != 0;
+                return (int)key.GetValue("Debug", 1) != 0;
             }
             set
             {
                 key.SetValue("Debug", value, RegistryValueKind.DWord);
                 OnPropertyChanged("Debug");
+            }
+        }
+
+        public bool CheckUpdate
+        {
+            get
+            {
+                return (int)key.GetValue("CheckUpdate", 1) != 0;
+            }
+            set
+            {
+                key.SetValue("CheckUpdate", value, RegistryValueKind.DWord);
+                OnPropertyChanged("CheckUpdate");
             }
         }
 

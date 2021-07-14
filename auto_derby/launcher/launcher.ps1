@@ -82,6 +82,7 @@ if (-not $mainWindow.ShowDialog()) {
 $data | Format-List -Property (
     "Job",
     "Debug", 
+    "CheckUpdate",
     "PythonExecutablePath",
     "SingleModeChoicesDataPath",
     "PauseIfRaceOrderGt",
@@ -119,6 +120,10 @@ if ($data.Debug) {
     $env:AUTO_DERBY_SINGLE_MODE_EVENT_IMAGE_PATH = "single_mode_event_images.local"
 }
 
+if ($data.CheckUpdate) {
+    $env:AUTO_DERBY_CHECK_UPDATE = "true"
+}
+
 if ($data.SingleModeChoicesDataPath) {
     $env:AUTO_DERBY_SINGLE_MODE_CHOICE_PATH = $data.SingleModeChoicesDataPath
 }
@@ -135,21 +140,6 @@ if ($requireAdmin) {
     $verb = "runAs"
 }
 
-# # https://stackoverflow.com/a/11440595
-# if (-not (
-#         [Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()
-#     ).IsInRole(
-#         [Security.Principal.WindowsBuiltInRole]::Administrator
-#     )
-# ) {
-#     Start-Process PowerShell -Verb runAs -ArgumentList @(
-#         "-Version", "3",
-#         "-NoProfile",
-#         "& '" + $MyInvocation.MyCommand.Definition + "'"
-#     )
-#     return
-# }
-
 $command = @"
 title auto-derby: $version
 cd /d "$WorkspaceFolder"
@@ -162,6 +152,7 @@ set "AUTO_DERBY_PAUSE_IF_RACE_ORDER_GT=$($env:AUTO_DERBY_PAUSE_IF_RACE_ORDER_GT)
 set "AUTO_DERBY_PLUGINS=$($env:AUTO_DERBY_PLUGINS)"
 set "AUTO_DERBY_SINGLE_MODE_TARGET_TRAINING_LEVELS=$($env:AUTO_DERBY_SINGLE_MODE_TARGET_TRAINING_LEVELS)"
 set "AUTO_DERBY_ADB_ADDRESS=$($env:AUTO_DERBY_ADB_ADDRESS)"
+set "AUTO_DERBY_CHECK_UPDATE=$($env:AUTO_DERBY_CHECK_UPDATE)"
 "$($Data.PythonExecutablePath)" -m auto_derby $($data.Job)
 exit
 "@
