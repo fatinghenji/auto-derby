@@ -1,17 +1,16 @@
 # -*- coding=UTF-8 -*-
 # pyright: strict
 from __future__ import annotations
-from auto_derby import mathtools
 
 import logging
 import time
+from concurrent import futures
 from typing import Optional
 
-from .. import action, template, templates, config, imagetools, terminal
-from ..single_mode import Context, Training, choice, race, go_out
 import cast_unknown as cast
-from concurrent import futures
 
+from .. import action, config, imagetools, mathtools, template, templates, terminal
+from ..single_mode import Context, Training, event, go_out, race
 
 LOGGER = logging.getLogger(__name__)
 
@@ -279,7 +278,7 @@ ALL_OPTIONS = [
 
 def _handle_option():
     time.sleep(0.2)  # wait animation
-    ans = choice.get(template.screenshot(max_age=0))
+    ans = event.get_choice(template.screenshot(max_age=0))
     action.tap_image(ALL_OPTIONS[ans - 1])
 
 
@@ -318,6 +317,7 @@ def nurturing():
             templates.SINGLE_MODE_COMMAND_TRAINING,
             templates.SINGLE_MODE_FANS_NOT_ENOUGH,
             templates.SINGLE_MODE_TARGET_RACE_NO_PERMISSION,
+            templates.SINGLE_MODE_TARGET_UNFINISHED,
             templates.SINGLE_MODE_FINISH_BUTTON,
             templates.SINGLE_MODE_FORMAL_RACE_BANNER,
             templates.SINGLE_MODE_RACE_NEXT_BUTTON,
@@ -330,6 +330,8 @@ def nurturing():
         name = tmpl.name
         if name == templates.CONNECTING:
             pass
+        elif name == templates.SINGLE_MODE_TARGET_UNFINISHED:
+            action.wait_tap_image(templates.CANCEL_BUTTON)
         elif name in (
             templates.SINGLE_MODE_FANS_NOT_ENOUGH,
             templates.SINGLE_MODE_TARGET_RACE_NO_PERMISSION,

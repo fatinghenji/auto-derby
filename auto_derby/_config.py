@@ -59,6 +59,9 @@ class config:
     single_mode_choice_path = os.getenv(
         "AUTO_DERBY_SINGLE_MODE_CHOICE_PATH", "single_mode_choices.json"
     )
+    single_mode_event_prompt_disabled = (
+        os.getenv("AUTO_DERBY_EVENT_PROMPT_DISABLED", "").lower() == "true"
+    )
     plugin_path = os.getenv("AUTO_DERBY_PLUGIN_PATH", "plugins")
     single_mode_race_class = single_mode.Race
     single_mode_training_class = single_mode.Training
@@ -69,6 +72,9 @@ class config:
     )
     use_legacy_screenshot = (
         os.getenv("AUTO_DERBY_USE_LEGACY_SCREENSHOT", "").lower() == "true"
+    )
+    ocr_prompt_disabled = (
+        os.getenv("AUTO_DERBY_OCR_PROMPT_DISABLED", "").lower() == "true"
     )
     adb_key_path = os.getenv("AUTO_DERBY_ADB_KEY_PATH", ADBClient.key_path)
 
@@ -90,9 +96,11 @@ class config:
         ADBClient.key_path = cls.adb_key_path
         ocr.g.data_path = cls.ocr_data_path
         ocr.g.image_path = cls.ocr_image_path
+        ocr.g.prompt_disabled = cls.ocr_prompt_disabled
         plugin.g.path = cls.plugin_path
-        single_mode.choice.g.data_path = cls.single_mode_choice_path
-        single_mode.choice.g.event_image_path = cls.single_mode_event_image_path
+        single_mode.event.g.data_path = cls.single_mode_choice_path
+        single_mode.event.g.event_image_path = cls.single_mode_event_image_path
+        single_mode.event.g.prompt_disabled = cls.single_mode_event_prompt_disabled
         single_mode.context.g.context_class = cls.single_mode_context_class
         single_mode.go_out.g.option_class = cls.single_mode_go_out_option_class
         single_mode.race.g.data_path = cls.single_mode_race_data_path
