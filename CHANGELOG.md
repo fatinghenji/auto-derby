@@ -2,6 +2,20 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.2.2](https://github.com/NateScarlet/auto-derby/compare/v1.2.1...v1.2.2) (2021-07-31)
+
+### Bug Fixes
+
+- **single-mode:** unable to choose 有馬記念 ([5a3e684](https://github.com/NateScarlet/auto-derby/commit/5a3e6847e457687dd1e2130430076c038d26f9d4))
+- wrong log formatting ([86f499e](https://github.com/NateScarlet/auto-derby/commit/86f499ee6b3513a6e0376fb676988deaf8ada94e))
+
+## [1.2.1](https://github.com/NateScarlet/auto-derby/compare/v1.2.0...v1.2.1) (2021-07-31)
+
+### Bug Fixes
+
+- **launcher:** can not launch when folder name contains space ([c225e8b](https://github.com/NateScarlet/auto-derby/commit/c225e8b68ee66e7852a63fab1e61755e9745015f)), closes [#120](https://github.com/NateScarlet/auto-derby/issues/120)
+- **single-mode:** should not treat character specific race as target race ([b32ac9d](https://github.com/NateScarlet/auto-derby/commit/b32ac9d678935d1372e59d12996aa15599628fa1)), closes [#121](https://github.com/NateScarlet/auto-derby/issues/121)
+
 ## [1.2.0](https://github.com/NateScarlet/auto-derby/compare/v1.1.0...v1.2.0) (2021-07-23)
 
 ### Features

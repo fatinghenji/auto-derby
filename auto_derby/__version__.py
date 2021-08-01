@@ -9,12 +9,12 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from datetime import datetime
 
-VERSION = "1.2.0"
-RELEASE_DATE = datetime.fromtimestamp(1627049507)
-LAST_GIT_COMMIT_DESCRIBE = "v1.1.0-21-g9306e11"
-LAST_GIT_COMMIT_HASH = "9306e11448d778805d5421fb66aa0bf72cdf32a0"
+VERSION = "1.2.2"
+RELEASE_DATE = datetime.fromtimestamp(1627733581)
+LAST_GIT_COMMIT_DESCRIBE = "v1.2.1-3-g5a3e684"
+LAST_GIT_COMMIT_HASH = "5a3e6847e457687dd1e2130430076c038d26f9d4"
 LAST_GIT_COMMIT_AUTHOR_NAME = "NateScarlet"
 LAST_GIT_COMMIT_AUTHOR_EMAIL = "NateScarlet@Gmail.com"
-LAST_GIT_COMMIT_AUTHOR_DATE = datetime.fromtimestamp(1627043048)
-LAST_GIT_COMMIT_SUBJECT = "fix(launcher): should accept csv file"
-LAST_GIT_COMMIT_BODY = "fix #116"
+LAST_GIT_COMMIT_AUTHOR_DATE = datetime.fromtimestamp(1627733564)
+LAST_GIT_COMMIT_SUBJECT = "fix(single-mode): unable to choose 有馬記念"
+LAST_GIT_COMMIT_BODY = "because it has multiple version for different characters"
