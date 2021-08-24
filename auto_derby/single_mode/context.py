@@ -1,8 +1,15 @@
 # -*- coding=UTF-8 -*-
 # pyright: strict
+
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from . import go_out
+
 import functools
+import logging
 import os
 from typing import Callable, List, Set, Text, Tuple, Type
 
@@ -12,7 +19,9 @@ import numpy as np
 from PIL.Image import Image
 from PIL.Image import fromarray as image_from_array
 
-from .. import imagetools, mathtools, ocr, template, templates, texttools
+from .. import imagetools, mathtools, ocr, scenes, template, templates, texttools
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class g:
@@ -202,6 +211,7 @@ class Context:
         # (year, month, half-month), 1-base
         self.date = (0, 0, 0)
         self.vitality = 0.0
+        self.total_vitality = 100
         self.mood = Context.MOOD_NORMAL
         self.conditions: Set[int] = set()
         self.fan_count = 0
@@ -239,6 +249,9 @@ class Context:
 
         self._next_turn_cb: List[Callable[[], None]] = []
 
+        self.scene: scenes.Scene = scenes.UnknownScene()
+        self.go_out_options: Tuple[go_out.Option, ...] = ()
+
     def next_turn(self) -> None:
         if self.date in ((1, 0, 0), (4, 0, 0)):
             self._extra_turn_count += 1
@@ -247,6 +260,7 @@ class Context:
 
         while self._next_turn_cb:
             self._next_turn_cb.pop()()
+        _LOGGER.info("next turn: %s", self)
 
     def defer_next_turn(self, cb: Callable[[], None]) -> None:
         self._next_turn_cb.append(cb)
@@ -329,6 +343,15 @@ class Context:
         self.conditions = _recognize_conditions(screenshot.crop(conditions_bbox))
 
     def __str__(self):
+        msg = ""
+        if self.go_out_options:
+            msg += ", go_out="
+            msg += ",".join(
+                (
+                    f"{i.current_event_count}/{i.total_event_count}"
+                    for i in self.go_out_options
+                )
+            )
         return (
             "Context<"
             f"turn={self.turn_count()},"
@@ -344,6 +367,7 @@ class Context:
             f"distance={''.join(i[1] for i in (self.sprint, self.mile, self.intermediate, self.long))},"
             f"style={''.join(i[1] for i in (self.last, self.middle, self.head, self.lead))},"
             f"condition={functools.reduce(lambda a, b: a | b, self.conditions, 0)}"
+            f"{msg}"
             ">"
         )
 
@@ -367,9 +391,21 @@ class Context:
 
     @property
     def is_summer_camp(self) -> bool:
-        return self.date[1:] in ((7, 1), (7, 2), (8, 1))
+        return self.date[0] in (2, 3) and self.date[1:] in (
+            (7, 1),
+            (7, 2),
+            (8, 1),
+            (8, 2),
+        )
 
     def expected_score(self) -> float:
+        import warnings
+
+        warnings.warn(
+            "expected score is deprecated, use rest/go-out command score instead",
+            DeprecationWarning,
+        )
+
         expected_score = 15 + self.turn_count() * 10 / 24
 
         can_heal_condition = not self.is_summer_camp

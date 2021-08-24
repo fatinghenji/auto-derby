@@ -1,7 +1,5 @@
-from auto_derby import mathtools
-from . import _test
-from .. import template, templates
-
+from .. import mathtools, template, templates
+from .. import _test
 
 _EXPECTED_POS = (240, 154)
 
