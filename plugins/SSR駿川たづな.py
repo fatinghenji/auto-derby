@@ -31,7 +31,7 @@ _MOOD[0] = 1
 _VIT[1] = 32
 # 駿川たづなの絆ゲージ+5
 # バッドコンディションが治る
-_HEAL[1] = 30
+_HEAL[1] = 1
 
 ## キネマの思ひ出（お出かけ3）
 ### 『200億の女～キケンな専業主婦～』
@@ -57,6 +57,7 @@ _WIS[3] = 5
 _MOOD[3] = 1
 # 駿川たづなの絆ゲージ+5
 # バッドコンディションが治る
+_HEAL[3] = 1
 
 ###ひと休みサプライズ（お出かけ5）
 # 体力+35~56
@@ -97,7 +98,7 @@ class Plugin(auto_derby.Plugin):
                 if self.name != _NAME:
                     return super().vitality(ctx)
 
-                return _VIT[self.current_event_count] / ctx.total_vitality
+                return _VIT[self.current_event_count] / ctx.max_vitality
 
             def score(self, ctx: Context) -> float:
                 ret = super().score(ctx)
