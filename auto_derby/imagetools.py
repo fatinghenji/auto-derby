@@ -152,6 +152,30 @@ def constant_color_key(
     return ret
 
 
+def compare_color_near(
+    img: np.ndarray,
+    pos: Tuple[int, int],
+    color: Tuple[int, ...],
+    radius: int = 2,
+) -> float:
+    x, y = pos
+    bbox = (
+        x - radius,
+        y - radius,
+        x + radius,
+        y + radius,
+    )
+    mask = constant_color_key(
+        img[
+            bbox[1] : bbox[3],
+            bbox[0] : bbox[2],
+        ],
+        color,
+    )
+    mask_max = np.uint8(np.amax(mask))
+    return int(mask_max) / 255
+
+
 def sharpen(img: np.ndarray, size: int = 1, *, bit_size: int = 8) -> np.ndarray:
     return cv2.filter2D(
         img, bit_size, np.array(((-1, -1, -1), (-1, 9, -1), (-1, -1, -1))) * size
@@ -192,6 +216,13 @@ def border_flood_fill(
 
 def bg_mask_by_outline(outline_img: np.ndarray) -> np.ndarray:
     return border_flood_fill(outline_img)
+
+
+def inside_outline(img: np.ndarray, outline_img: np.ndarray) -> np.ndarray:
+    _, outline_img = cv2.threshold(outline_img, 0, 255, cv2.THRESH_BINARY)
+    bg_mask = border_flood_fill(outline_img) + outline_img
+    fg_mask = 255 - bg_mask
+    return cv2.copyTo(img, fg_mask)
 
 
 def resize(

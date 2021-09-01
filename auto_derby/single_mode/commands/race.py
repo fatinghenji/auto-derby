@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import logging
-import time
 from typing import Text
 
 from ... import action, templates, terminal
@@ -31,27 +30,48 @@ def _choose_running_style(ctx: Context, race1: Race) -> None:
     scene.choose_runing_style(style_scores[0][0])
 
 
-def _handle_race_result():
+class RaceResult:
+    def __init__(self) -> None:
+        self.race = Race()
+        self.order = 0
+        self.is_failed = False
+
+    def __str__(self) -> str:
+        return f"RaceResult<race={self.race} order={self.order} fail={self.is_failed}>"
+
+
+_RACE_ORDER_TEMPLATES = {
+    templates.RACE_RESULT_NO1: 1,
+    templates.RACE_RESULT_NO2: 2,
+    templates.RACE_RESULT_NO3: 3,
+    templates.RACE_RESULT_NO4: 4,
+    templates.RACE_RESULT_NO5: 5,
+    templates.RACE_RESULT_NO6: 6,
+    templates.RACE_RESULT_NO8: 8,
+    templates.RACE_RESULT_NO10: 10,
+}
+
+
+def _handle_race_result(ctx: Context, race: Race):
     action.wait_tap_image(templates.RACE_RESULT_BUTTON)
 
-    _, pos = action.wait_image(
-        templates.RACE_RESULT_NO1,
-        templates.RACE_RESULT_NO2,
-        templates.RACE_RESULT_NO3,
-        templates.RACE_RESULT_NO4,
-        templates.RACE_RESULT_NO5,
-        templates.RACE_RESULT_NO6,
-        templates.RACE_RESULT_NO8,
-        templates.RACE_RESULT_NO10,
+    res = RaceResult()
+    res.race = race
+
+    tmpl, pos = action.wait_image(*_RACE_ORDER_TEMPLATES.keys())
+    res.order = _RACE_ORDER_TEMPLATES[tmpl.name]
+    action.tap(pos)
+
+    tmpl, pos = action.wait_image(
+        templates.GREEN_NEXT_BUTTON,
+        templates.SINGLE_MODE_CONTINUE,
     )
-    while True:
-        time.sleep(1)
-        if action.tap_image(templates.GREEN_NEXT_BUTTON):
-            break
-        if action.tap_image(templates.SINGLE_MODE_CONTINUE):
-            _handle_race_result()
-            return
-        action.tap(pos)
+    res.is_failed = tmpl.name == templates.SINGLE_MODE_CONTINUE
+    _LOGGER.info("race result: %s", res)
+    g.on_race_result(ctx, res)
+    action.tap(pos)
+    if res.is_failed:
+        _handle_race_result(ctx, race)
 
 
 class RaceCommand(Command):
@@ -89,7 +109,7 @@ class RaceCommand(Command):
 
         _choose_running_style(ctx, race1)
 
-        _handle_race_result()
+        _handle_race_result(ctx, race1)
         ctx.fan_count = 0  # request update in next turn
         tmpl, pos = action.wait_image(
             templates.SINGLE_MODE_LIVE_BUTTON,

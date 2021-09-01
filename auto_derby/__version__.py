@@ -9,12 +9,12 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from datetime import datetime
 
-VERSION = "1.5.0"
-RELEASE_DATE = datetime.fromtimestamp(1629528461)
-LAST_GIT_COMMIT_DESCRIBE = "v1.4.2-23-g8514182"
-LAST_GIT_COMMIT_HASH = "851418294e8cfe675541a00b65ccd0d88d5b5781"
+VERSION = "1.6.1"
+RELEASE_DATE = datetime.fromtimestamp(1630217346)
+LAST_GIT_COMMIT_DESCRIBE = "v1.6.0-1-gac85efa"
+LAST_GIT_COMMIT_HASH = "ac85efa47595a9586822d5d5fb244a51ccc0595f"
 LAST_GIT_COMMIT_AUTHOR_NAME = "NateScarlet"
 LAST_GIT_COMMIT_AUTHOR_EMAIL = "NateScarlet@Gmail.com"
-LAST_GIT_COMMIT_AUTHOR_DATE = datetime.fromtimestamp(1629526559)
-LAST_GIT_COMMIT_SUBJECT = "fix(single-mode): recognize friend type partner"
+LAST_GIT_COMMIT_AUTHOR_DATE = datetime.fromtimestamp(1630208564)
+LAST_GIT_COMMIT_SUBJECT = "fix(single-mode): should call on_race_result before continue"
 LAST_GIT_COMMIT_BODY = ""

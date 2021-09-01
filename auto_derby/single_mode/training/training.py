@@ -129,6 +129,88 @@ def _ocr_training_effect(img: Image) -> int:
     return int(text.lstrip("+"))
 
 
+def _ocr_red_training_effect(img: Image) -> int:
+    cv_img = imagetools.cv_image(imagetools.resize(img, height=32))
+    sharpened_img = cv2.filter2D(
+        cv_img,
+        8,
+        np.array(
+            (
+                (0, -1, 0),
+                (-1, 5, -1),
+                (0, -1, 0),
+            )
+        ),
+    )
+    sharpened_img = imagetools.mix(sharpened_img, cv_img, 0.5)
+
+    white_outline_img = imagetools.constant_color_key(
+        sharpened_img,
+        (255, 255, 255),
+    )
+
+    masked_img = imagetools.inside_outline(cv_img, white_outline_img)
+
+    red_outline_img = imagetools.constant_color_key(
+        masked_img,
+        (15, 18, 216),
+        (34, 42, 234),
+    )
+
+    masked_img = imagetools.inside_outline(masked_img, red_outline_img)
+
+    height = cv_img.shape[0]
+    fill_gradient = _gradient(
+        (
+            ((129, 211, 255), 0),
+            ((126, 188, 255), round(height * 0.5)),
+            ((57, 112, 255), height),
+        )
+    ).astype(np.uint8)
+    fill_img = np.repeat(np.expand_dims(fill_gradient, 1), cv_img.shape[1], axis=1)
+    assert fill_img.shape == cv_img.shape
+
+    text_img = imagetools.color_key(masked_img, fill_img)
+    imagetools.fill_area(text_img, (0,), size_lt=8)
+
+    text_img_extra = imagetools.constant_color_key(
+        masked_img,
+        (128, 196, 253),
+        (136, 200, 255),
+        (144, 214, 255),
+        threshold=0.95,
+    )
+    text_img = np.array(np.maximum(text_img, text_img_extra))
+    h = cv_img.shape[0]
+    imagetools.fill_area(text_img, (0,), size_lt=round(h * 0.2 ** 2))
+
+    if os.getenv("DEBUG") == __name__:
+        cv2.imshow("cv_img", cv_img)
+        cv2.imshow("sharpened_img", sharpened_img)
+        cv2.imshow("white_outline_img", white_outline_img)
+        cv2.imshow("red_outline_img", red_outline_img)
+        cv2.imshow("masked_img", masked_img)
+        cv2.imshow("text_img_extra", text_img_extra)
+        cv2.imshow("text_img", text_img)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
+
+    # +100 has different color
+    hash100 = "0000000000006066607770ff70df60df00000000000000000000000000000000"
+    if (
+        imagetools.compare_hash(
+            imagetools.image_hash(imagetools.pil_image(text_img)),
+            hash100,
+        )
+        > 0.9
+    ):
+        return 100
+    text = ocr.text(image_from_array(text_img))
+    if not text:
+        return 0
+    return int(text.lstrip("+"))
+
+
 def _recognize_level(rgb_color: Tuple[int, ...]) -> int:
     if imagetools.compare_color((49, 178, 22), rgb_color) > 0.9:
         return 1
@@ -143,23 +225,39 @@ def _recognize_level(rgb_color: Tuple[int, ...]) -> int:
     raise ValueError("_recognize_level: unknown level color: %s" % (rgb_color,))
 
 
-def _estimate_failure_rate(ctx: Context, trn: Training) -> float:
-    return mathtools.interpolate(
-        int(ctx.vitality * 10000),
-        (
-            (0, 0.85),
-            (1500, 0.7),
-            (4000, 0.0),
-        )
-        if trn.wisdom > 0
-        else (
-            (0, 0.99),
-            (1500, 0.8),
-            (3000, 0.5),
-            (5000, 0.15),
-            (7000, 0.0),
-        ),
+def _recognize_failure_rate(
+    rp: mathtools.ResizeProxy, trn: Training, img: Image
+) -> float:
+    x, y = trn.confirm_position
+    bbox = (
+        x + rp.vector(20, 540),
+        y + rp.vector(-155, 540),
+        x + rp.vector(70, 540),
+        y + rp.vector(-120, 540),
     )
+    rate_img = imagetools.cv_image(img.crop(bbox))
+    outline_img = imagetools.constant_color_key(
+        rate_img,
+        (252, 150, 14),
+        (255, 183, 89),
+        (0, 150, 255),
+        (0, 69, 255),
+    )
+    fg_img = imagetools.inside_outline(rate_img, outline_img)
+    text_img = imagetools.constant_color_key(
+        fg_img,
+        (255, 255, 255),
+        (18, 218, 255),
+    )
+    if __name__ == os.getenv("DEBUG"):
+        cv2.imshow("rate", rate_img)
+        cv2.imshow("outline", outline_img)
+        cv2.imshow("fg", fg_img)
+        cv2.imshow("text", text_img)
+        cv2.waitKey()
+        cv2.destroyAllWindows()
+    text = ocr.text(imagetools.pil_image(text_img))
+    return int(text.strip("%")) / 100
 
 
 def _estimate_vitality(ctx: Context, trn: Training) -> float:
@@ -209,12 +307,32 @@ class Training:
         self.vitality: float = 0.0
         self._use_estimate_vitality = False
         self.failure_rate: float = 0.0
-        self._use_estimate_failure_rate = False
         self.confirm_position: Tuple[int, int] = (0, 0)
         self.partners: Tuple[Partner, ...] = tuple()
 
     @classmethod
-    def from_training_scene(cls, img: Image) -> Training:
+    def from_training_scene(
+        cls,
+        img: Image,
+    ) -> Training:
+        # TODO: remove old api at next major version
+        import warnings
+
+        warnings.warn(
+            "use from_training_scene_v2 instead",
+            DeprecationWarning,
+        )
+        ctx = Context()
+        ctx.scenario = ctx.SCENARIO_URA
+        return cls.from_training_scene_v2(ctx, img)
+
+    @classmethod
+    def from_training_scene_v2(
+        cls,
+        ctx: Context,
+        img: Image,
+    ) -> Training:
+
         if g.image_path:
             image_id = imagetools.md5(
                 imagetools.cv_image(img.convert("RGB")),
@@ -256,18 +374,54 @@ class Training:
             tuple(cast.list_(img.getpixel(rp.vector2((10, 200), 540)), int))
         )
 
-        t, b = 503, 532
-        self.speed = _ocr_training_effect(img.crop(rp.vector4((18, t, 91, b), 466)))
-        self.stamina = _ocr_training_effect(img.crop(rp.vector4((91, t, 163, b), 466)))
-        self.power = _ocr_training_effect(img.crop(rp.vector4((163, t, 237, b), 466)))
-        self.guts = _ocr_training_effect(img.crop(rp.vector4((237, t, 309, b), 466)))
-        self.wisdom = _ocr_training_effect(img.crop(rp.vector4((309, t, 382, b), 466)))
-        self.skill = _ocr_training_effect(img.crop(rp.vector4((387, t, 450, b), 466)))
+        bbox_group = {
+            ctx.SCENARIO_URA: (
+                rp.vector4((18, 503, 91, 532), 466),
+                rp.vector4((91, 503, 163, 532), 466),
+                rp.vector4((163, 503, 237, 532), 466),
+                rp.vector4((237, 503, 309, 532), 466),
+                rp.vector4((309, 503, 382, 532), 466),
+                rp.vector4((387, 503, 450, 532), 466),
+            ),
+            ctx.SCENARIO_AOHARU: (
+                rp.vector4((18, 597, 104, 625), 540),
+                rp.vector4((104, 597, 190, 625), 540),
+                rp.vector4((190, 597, 273, 625), 540),
+                rp.vector4((273, 597, 358, 625), 540),
+                rp.vector4((358, 597, 441, 625), 540),
+                rp.vector4((448, 597, 521, 625), 540),
+            ),
+        }[ctx.scenario]
+
+        self.speed = _ocr_training_effect(img.crop(bbox_group[0]))
+        self.stamina = _ocr_training_effect(img.crop(bbox_group[1]))
+        self.power = _ocr_training_effect(img.crop(bbox_group[2]))
+        self.guts = _ocr_training_effect(img.crop(bbox_group[3]))
+        self.wisdom = _ocr_training_effect(img.crop(bbox_group[4]))
+        self.skill = _ocr_training_effect(img.crop(bbox_group[5]))
+
+        extra_bbox_group = {
+            ctx.SCENARIO_AOHARU: (
+                rp.vector4((18, 572, 104, 595), 540),
+                rp.vector4((104, 572, 190, 595), 540),
+                rp.vector4((190, 572, 273, 595), 540),
+                rp.vector4((273, 572, 358, 595), 540),
+                rp.vector4((358, 572, 441, 595), 540),
+                rp.vector4((448, 572, 521, 595), 540),
+            )
+        }.get(ctx.scenario)
+        if extra_bbox_group:
+            self.speed += _ocr_red_training_effect(img.crop(extra_bbox_group[0]))
+            self.stamina += _ocr_red_training_effect(img.crop(extra_bbox_group[1]))
+            self.power += _ocr_red_training_effect(img.crop(extra_bbox_group[2]))
+            self.guts += _ocr_red_training_effect(img.crop(extra_bbox_group[3]))
+            self.wisdom += _ocr_red_training_effect(img.crop(extra_bbox_group[4]))
+            self.skill += _ocr_red_training_effect(img.crop(extra_bbox_group[5]))
+
         # TODO: recognize vitality
         self._use_estimate_vitality = True
-        # TODO: recognize failure rate
-        self._use_estimate_failure_rate = True
-        self.partners = tuple(Partner.from_training_scene(img))
+        self.failure_rate = _recognize_failure_rate(rp, self, img)
+        self.partners = tuple(Partner.from_training_scene_v2(ctx, img))
         return self
 
     def __str__(self):
@@ -280,13 +434,11 @@ class Training:
             ("wis", self.wisdom),
             ("ski", self.skill),
         )
-        partner_text = ",".join(
-            f"{i.type_text(i.type)}@{i.level}{'!' if i.has_hint else ''}"
-            for i in self.partners
-        )
+        partner_text = ",".join(i.to_short_text() for i in self.partners)
         return (
             "Training<"
             f"lv={self.level} "
+            + (f"fail={int(self.failure_rate*100)}% ")
             + " ".join(
                 (
                     f"{name}={value}"
@@ -301,8 +453,6 @@ class Training:
         )
 
     def score(self, ctx: Context) -> float:
-        if self._use_estimate_failure_rate:
-            self.failure_rate = _estimate_failure_rate(ctx, self)
         if self._use_estimate_vitality:
             self.vitality = _estimate_vitality(ctx, self)
         return training_score.compute(ctx, self)

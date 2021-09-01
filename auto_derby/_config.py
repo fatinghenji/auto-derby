@@ -35,6 +35,14 @@ def _parse_training_levels(spec: Text) -> Dict[int, int]:
     return ret
 
 
+def _default_on_single_mode_crane_game(ctx: single_mode.Context) -> None:
+    pass
+
+
+def _default_on_single_mode_end(ctx: single_mode.Context) -> None:
+    pass
+
+
 class config:
     LOG_PATH = os.getenv("AUTO_DERBY_LOG_PATH", "auto_derby.log")
     PLUGINS = tuple(i for i in os.getenv("AUTO_DERBY_PLUGINS", "").split(",") if i)
@@ -90,7 +98,13 @@ class config:
 
     on_single_mode_live = sc.g.on_winning_live
     on_single_mode_command = sc.g.on_command
-    on_single_mode_crane_game: Callable[[single_mode.Context], None] = lambda *_: None
+    on_single_mode_race_result = sc.g.on_race_result
+    on_single_mode_crane_game: Callable[
+        [single_mode.Context], None
+    ] = _default_on_single_mode_crane_game
+    on_single_mode_end: Callable[
+        [single_mode.Context], None
+    ] = _default_on_single_mode_end
 
     terminal_pause_sound_path = os.path.expandvars(
         "${WinDir}/Media/Windows Background.wav"
@@ -123,6 +137,7 @@ class config:
         sc.g.pause_if_race_order_gt = cls.pause_if_race_order_gt
         sc.g.on_winning_live = cls.on_single_mode_live
         sc.g.on_command = cls.on_single_mode_command
+        sc.g.on_race_result = cls.on_single_mode_race_result
         template.g.last_screenshot_save_path = cls.last_screenshot_save_path
         terminal.g.pause_sound_path = cls.terminal_pause_sound_path
         terminal.g.prompt_sound_path = cls.terminal_prompt_sound_path
