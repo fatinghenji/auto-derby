@@ -30,6 +30,7 @@ class CommandScene(Scene):
             templates.SINGLE_MODE_COMMAND_TRAINING,
             templates.SINGLE_MODE_FORMAL_RACE_BANNER,
             templates.SINGLE_MODE_URA_FINALS,
+            duration=2,
         )
         return cls()
 
