@@ -2,6 +2,99 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.8.0](https://github.com/NateScarlet/auto-derby/compare/v1.7.7...v1.8.0) (2021-09-11)
+
+### Features
+
+- **plugin:** add `less_op` plugin ([19e9f0b](https://github.com/NateScarlet/auto-derby/commit/19e9f0b5b3c2cac0dd6c4fcb758769545e71ef3d))
+- **plugin:** add plugin `SSR樫本理子` ([2f920c5](https://github.com/NateScarlet/auto-derby/commit/2f920c584449722e50653f65a4499e61f79f79c2))
+- **plugin:** SSR 駿川たづな: adjust go out score ([f735486](https://github.com/NateScarlet/auto-derby/commit/f73548687d704d7a4d70118cbed42b295e94a1f2))
+- **single-mode:** adjust go out score ([e539a2f](https://github.com/NateScarlet/auto-derby/commit/e539a2f0b908ae6119461dcddf69db57ca4d5b1e)), closes [#185](https://github.com/NateScarlet/auto-derby/issues/185)
+- **single-mode:** adjust training score ([a3dd24b](https://github.com/NateScarlet/auto-derby/commit/a3dd24b4081dd63bdd050a1c4341be716413b591))
+- **single-mode:** resize image before recognize failure rate ([0f83d76](https://github.com/NateScarlet/auto-derby/commit/0f83d76a64c30148bbe4828d2e36f26976a4d4e4))
+
+### Bug Fixes
+
+- should wait template in paddock scene ([cd10e97](https://github.com/NateScarlet/auto-derby/commit/cd10e971724dd0a5ebdcb8af08949a533ae6499e))
+- **single-mode:** should wait menu animation ([0f81898](https://github.com/NateScarlet/auto-derby/commit/0f818981bd53a772a65f44b01192a722e2cf262e))
+- **single-mode:** template can not match ([a71e820](https://github.com/NateScarlet/auto-derby/commit/a71e820f61f122d5ce992c55c4f6314e8a5987bb)), closes [#186](https://github.com/NateScarlet/auto-derby/issues/186)
+- wrong button pos in PaddockScene.choose_running_style ([#187](https://github.com/NateScarlet/auto-derby/issues/187)) ([0dc8cc0](https://github.com/NateScarlet/auto-derby/commit/0dc8cc036e88af5d80f615a943e001cbcffbb5cf))
+
+## [1.7.7](https://github.com/NateScarlet/auto-derby/compare/v1.7.6...v1.7.7) (2021-09-07)
+
+### Bug Fixes
+
+- **single-mode:** error when recognize aoharu training ([3acd2c4](https://github.com/NateScarlet/auto-derby/commit/3acd2c4cc010098b2d94168d97e8f5f805a29c7c)), closes [#183](https://github.com/NateScarlet/auto-derby/issues/183)
+
+## [1.7.6](https://github.com/NateScarlet/auto-derby/compare/v1.7.5...v1.7.6) (2021-09-05)
+
+### Bug Fixes
+
+- **single-mode:** error when recognize aoharu training ([65400ec](https://github.com/NateScarlet/auto-derby/commit/65400ec4635703ffc303951f56c54e99f0a9fb31)), closes [#182](https://github.com/NateScarlet/auto-derby/issues/182)
+
+## [1.7.5](https://github.com/NateScarlet/auto-derby/compare/v1.7.4...v1.7.5) (2021-09-05)
+
+### Bug Fixes
+
+- **single-mode:** error when recognize aoharu training ([610ae1f](https://github.com/NateScarlet/auto-derby/commit/610ae1f97d103bfcebca60f5b768df8ada73e4e0)), closes [#179](https://github.com/NateScarlet/auto-derby/issues/179)
+
+## [1.7.4](https://github.com/NateScarlet/auto-derby/compare/v1.7.3...v1.7.4) (2021-09-05)
+
+### Bug Fixes
+
+- wrong version code generated ([7021d0c](https://github.com/NateScarlet/auto-derby/commit/7021d0c35cb5a8c6527e710f1b2a82c2c0bb66e2))
+
+## [1.7.3](https://github.com/NateScarlet/auto-derby/compare/v1.7.2...v1.7.3) (2021-09-05)
+
+### Bug Fixes
+
+- **nurturing:** stuck when fan not enough ([8bfe47e](https://github.com/NateScarlet/auto-derby/commit/8bfe47e3f7454f0303488ffe64e75b88ec3f9314)), closes [#180](https://github.com/NateScarlet/auto-derby/issues/180)
+- **single-mode:** wrong scenario recognition ([9c6d07b](https://github.com/NateScarlet/auto-derby/commit/9c6d07b0c1301f5238adb02e824633481a4984aa)), closes [#178](https://github.com/NateScarlet/auto-derby/issues/178)
+
+## [1.7.2](https://github.com/NateScarlet/auto-derby/compare/v1.7.1...v1.7.2) (2021-09-05)
+
+### Bug Fixes
+
+- **single-mode:** error when recognize aoharu training ([b25d324](https://github.com/NateScarlet/auto-derby/commit/b25d3249efa6b8bed4915e669214818119a4c469)), closes [#179](https://github.com/NateScarlet/auto-derby/issues/179)
+
+## [1.7.1](https://github.com/NateScarlet/auto-derby/compare/v1.7.0...v1.7.1) (2021-09-04)
+
+### Bug Fixes
+
+- **single-mode:** error when recognize training ([5d334fc](https://github.com/NateScarlet/auto-derby/commit/5d334fca51513cfbdb2473112d8926cd9b097469)), closes [#177](https://github.com/NateScarlet/auto-derby/issues/177)
+- **single-mode:** should wait button when entering training scene ([e8d3b2d](https://github.com/NateScarlet/auto-derby/commit/e8d3b2d71cb0716ec8018629b61545500611754c)), closes [#177](https://github.com/NateScarlet/auto-derby/issues/177)
+
+## [1.7.0](https://github.com/NateScarlet/auto-derby/compare/v1.6.1...v1.7.0) (2021-09-04)
+
+### Features
+
+- **single-mode:** adjust partner score ([b01d706](https://github.com/NateScarlet/auto-derby/commit/b01d706d4a9fadac4dfaae32761277e98131471b))
+- **single-mode:** adjust partner soul burst score ([e7ad077](https://github.com/NateScarlet/auto-derby/commit/e7ad077e72f741edcfed87c9e31b3df370984f9a))
+- **single-mode:** adjust training partner score ([7e9d879](https://github.com/NateScarlet/auto-derby/commit/7e9d879d7979da54864d04ce065d673b9890b472))
+- **single-mode:** adjust training partner score ([0a80b7f](https://github.com/NateScarlet/auto-derby/commit/0a80b7fefdf436b404f75d1e64a60c06a4f52e1c))
+- **single-mode:** recognize aoharu normal training effect ([cf6ce59](https://github.com/NateScarlet/auto-derby/commit/cf6ce5920f95dcb91d36e453bc48b6db8ee421f9))
+- **single-mode:** recognize aoharu soul ([6131303](https://github.com/NateScarlet/auto-derby/commit/613130366a6b8717397c3c9e6de0fa5b6988f285))
+- **single-mode:** recognize aoharu training effect ([5d8e1fd](https://github.com/NateScarlet/auto-derby/commit/5d8e1fd80648b0970330af8d968086a9a35e78ad))
+- **single-mode:** recognize partner training ([25e5b06](https://github.com/NateScarlet/auto-derby/commit/25e5b06dc0b572fb57f18f8245b1d233ab29fc77))
+- **single-mode:** recognize scenario ([10fb1dd](https://github.com/NateScarlet/auto-derby/commit/10fb1dd4fe2a0b46d5979f659cf6f8325771b8d0))
+- **single-mode:** recognize soul burst ([8abf4ca](https://github.com/NateScarlet/auto-derby/commit/8abf4ca29137d9acd8b5a2f0b709b120d5876ebd))
+- **single-mode:** recognize training failure rate ([8494579](https://github.com/NateScarlet/auto-derby/commit/84945792a56690f84ad972c5a7c692418d05016c)), closes [#152](https://github.com/NateScarlet/auto-derby/issues/152)
+- **single-mode:** support aoharu final race ([ff27fa8](https://github.com/NateScarlet/auto-derby/commit/ff27fa891c35fb8e847ad8844dd687b65d586c79)), closes [#172](https://github.com/NateScarlet/auto-derby/issues/172)
+- **single-mode:** support aoharu race ([8564340](https://github.com/NateScarlet/auto-derby/commit/85643405303429e4eaae4400186e802b1149c746)), closes [#172](https://github.com/NateScarlet/auto-derby/issues/172)
+
+### Bug Fixes
+
+- **plugin:** SSR 駿川たづな: error on new version ([094e830](https://github.com/NateScarlet/auto-derby/commit/094e830842be6f2c6442ff2713b37f52fea33e36))
+- **single-mode:** error when recognize partner ([58b1e67](https://github.com/NateScarlet/auto-derby/commit/58b1e670332ce51045dcedf5151579990ad91062))
+- **single-mode:** error when recognize scenario ([83e4e2d](https://github.com/NateScarlet/auto-derby/commit/83e4e2d21f2827615c9ea6959c183ada7f607d2d))
+- **single-mode:** should wait turn start animation ([2be8781](https://github.com/NateScarlet/auto-derby/commit/2be8781a007ac28c7d85250082c106d81bce9b1d))
+- **single-mode:** wrong partner recognition ([6af4acf](https://github.com/NateScarlet/auto-derby/commit/6af4acf49be26d4a4bfb130c0cddb1a05019dfe4))
+- **single-mode:** wrong partner training recognition ([6ff8b81](https://github.com/NateScarlet/auto-derby/commit/6ff8b81bbd5d58f9f70d70f1a58d6ff062b40a1a))
+- **single-mode:** wrong race score adjust when fan not enough ([f513811](https://github.com/NateScarlet/auto-derby/commit/f513811cdac6fac0ca3e16b9722506513772f5a8)), closes [#171](https://github.com/NateScarlet/auto-derby/issues/171)
+- **single-mode:** wrong training partner recognition ([5a3c8b0](https://github.com/NateScarlet/auto-derby/commit/5a3c8b0990a8c886e5363770f20d17f1f49b07b1))
+- **single-mode:** wrong training partner recognition ([d33b181](https://github.com/NateScarlet/auto-derby/commit/d33b1812af29f602ef65f30f29b1dc2e80d733c6))
+- **single-mode:** wrong training partner recognition ([3ca8b06](https://github.com/NateScarlet/auto-derby/commit/3ca8b06e5cc44e9a6d8533611a0bce6b02d0ac8e))
+
 ## [1.6.1](https://github.com/NateScarlet/auto-derby/compare/v1.6.0...v1.6.1) (2021-08-29)
 
 ### Bug Fixes
