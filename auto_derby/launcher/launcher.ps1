@@ -52,11 +52,17 @@ $mainWindow.Content.FindName('chooseSingleModeChoicesDataPathButton').add_Click(
             DefaultExt       = ".json"
             Filter           = "CSV data file|*.csv|Legacy JSON data file|*.json|Any file|*.*"
             FileName         = $data.SingleModeChoicesDataPath
-            InitialDirectory = (Split-Path $data.SingleModeChoicesDataPath -Parent)
+            InitialDirectory = . {
+                try {
+                    Split-Path $data.SingleModeChoicesDataPath -Parent
+                }
+                catch {
+                } 
+            }
         }
         if ($dialog.ShowDialog()) {
             $data.SingleModeChoicesDataPath = $dialog.FileName
-        }
+        } 
     }
 )
 $mainWindow.Content.FindName('choosePythonExecutablePathButton').add_Click( 
@@ -65,7 +71,13 @@ $mainWindow.Content.FindName('choosePythonExecutablePathButton').add_Click(
             Title            = "Choose python executable"
             Filter           = "Executable|*.exe|Any file|*.*"
             FileName         = $data.PythonExecutablePath
-            InitialDirectory = (Split-Path $data.PythonExecutablePath -Parent)
+            InitialDirectory = . {
+                try {
+                    Split-Path $data.PythonExecutablePath -Parent
+                }
+                catch {
+                }
+            }
         }
         if ($dialog.ShowDialog()) {
             $data.PythonExecutablePath = $dialog.FileName
@@ -145,6 +157,7 @@ set "AUTO_DERBY_SINGLE_MODE_TARGET_TRAINING_LEVELS=$($env:AUTO_DERBY_SINGLE_MODE
 set "AUTO_DERBY_ADB_ADDRESS=$($env:AUTO_DERBY_ADB_ADDRESS)"
 set "AUTO_DERBY_CHECK_UPDATE=$($env:AUTO_DERBY_CHECK_UPDATE)"
 "$($Data.PythonExecutablePath)" -m auto_derby $($data.Job)
+start "auto-derby launcher" cmd.exe /c .\launcher.cmd
 exit
 "@
 

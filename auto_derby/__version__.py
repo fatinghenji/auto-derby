@@ -9,12 +9,12 @@ from __future__ import absolute_import, division, print_function, unicode_litera
 
 from datetime import datetime
 
-VERSION = "1.8.0"
-RELEASE_DATE = datetime.fromtimestamp(1631398145)
-LAST_GIT_COMMIT_DESCRIBE = "v1.7.7-14-g19e9f0b"
-LAST_GIT_COMMIT_HASH = "19e9f0b5b3c2cac0dd6c4fcb758769545e71ef3d"
-LAST_GIT_COMMIT_AUTHOR_NAME = "NateScarlet"
-LAST_GIT_COMMIT_AUTHOR_EMAIL = "NateScarlet@Gmail.com"
-LAST_GIT_COMMIT_AUTHOR_DATE = datetime.fromtimestamp(1631389451)
-LAST_GIT_COMMIT_SUBJECT = "feat(plugin): add `less_op` plugin"
+VERSION = "1.12.0"
+RELEASE_DATE = datetime.fromtimestamp(1638531262)
+LAST_GIT_COMMIT_DESCRIBE = "v1.11.0-4-g50ccbe2"
+LAST_GIT_COMMIT_HASH = "50ccbe28bd7b050162660a051dacbae00d76d8a5"
+LAST_GIT_COMMIT_AUTHOR_NAME = "CNA-Bld"
+LAST_GIT_COMMIT_AUTHOR_EMAIL = "cna.bld@gmail.com"
+LAST_GIT_COMMIT_AUTHOR_DATE = datetime.fromtimestamp(1638188791)
+LAST_GIT_COMMIT_SUBJECT = "feat(single-mode): support race track type 4"
 LAST_GIT_COMMIT_BODY = ""

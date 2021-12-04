@@ -6,7 +6,7 @@ from __future__ import annotations
 import time
 from typing import Any, Dict, Text
 
-from ... import action, single_mode, template, templates
+from ... import action, single_mode, template, templates, ocr, terminal
 from ...scenes import Scene
 from ..scene import Scene, SceneHolder
 
@@ -27,7 +27,7 @@ class CommandScene(Scene):
         if ctx.scene.name() == "single-mode-training":
             action.tap_image(templates.RETURN_BUTTON)
 
-        action.wait_image_stable(
+        action.wait_image(
             templates.SINGLE_MODE_COMMAND_TRAINING,
             templates.SINGLE_MODE_FORMAL_RACE_BANNER,
             templates.SINGLE_MODE_URA_FINALS,
@@ -88,15 +88,25 @@ class CommandScene(Scene):
 
     def recognize(self, ctx: single_mode.Context):
         action.reset_client_size()
-        ctx.update_by_command_scene(template.screenshot())
-        # wait aoharu countdown animation
-        if ctx.scenario == ctx.SCENARIO_AOHARU and ctx.date[1:] in (
-            (1, 2),
-            (4, 1),
-            (7, 2),
-            (10, 1),
-        ):
-            time.sleep(5)
+        # animation may not finished
+        # https://github.com/NateScarlet/auto-derby/issues/201
+        class local:
+            next_retry_count = 0
+
+        max_retry = 10
+
+        def _update_with_retry():
+            local.next_retry_count += 1
+            if local.next_retry_count > max_retry:
+                ctx.update_by_command_scene(template.screenshot())
+            else:
+                with ocr.prompt_disabled(False), terminal.prompt_disabled(True):
+                    ctx.update_by_command_scene(template.screenshot())
+
+        action.run_with_retry(
+            _update_with_retry,
+            max_retry,
+        )
         self.recognize_commands(ctx)
         if not ctx.fan_count:
             self.recognize_class(ctx)
