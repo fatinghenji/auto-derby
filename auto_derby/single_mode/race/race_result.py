@@ -58,14 +58,21 @@ class RaceResult:
                 pass
             if size > g.result_max_bytes:
                 _LOGGER.info(
-                    "data file large than %dMiB, remove records that older than 90 days",
+                    "data file large than %.2fMiB, remove records that older than 90 days",
                     g.result_max_bytes / (1 << 20),
                 )
                 prune(datetime.datetime.now() - datetime.timedelta(days=-90))
 
-        with open(g.result_path, "a", encoding="utf-8") as f:
-            json.dump(self.to_dict(), f, ensure_ascii=False)
-            f.write("\n")
+        def _do():
+            with open(g.result_path, "a", encoding="utf-8") as f:
+                json.dump(self.to_dict(), f, ensure_ascii=False)
+                f.write("\n")
+
+        try:
+            _do()
+        except FileNotFoundError:
+            os.makedirs(os.path.dirname(p))
+            _do()
 
 
 def iterate() -> Iterator[RaceResult]:
