@@ -143,68 +143,31 @@ class Plugin(auto_derby.Plugin):
 auto_derby.plugin.register(__name__, Plugin())
 
 
-# https://dmg.umamusume.jp/news/detail/?id=470
-_add_compagin(
-    OncePerDayCampaign(
-        datetime.datetime(2021, 12, 11, 5, 0, tzinfo=JST),
-        datetime.datetime(2021, 12, 13, 4, 59, tzinfo=JST),
-        "阪神ジュベナイルフィリーズ",
-        order_lte=1,
-    )
-)
-
-_add_compagin(
-    OncePerDayCampaign(
-        datetime.datetime(2021, 12, 18, 5, 0, tzinfo=JST),
-        datetime.datetime(2021, 12, 20, 4, 59, tzinfo=JST),
-        "朝日杯フューチュリティステークス",
-        order_lte=1,
-    ),
-)
-
-_add_compagin(
-    OncePerDayCampaign(
-        datetime.datetime(2021, 12, 25, 5, 0, tzinfo=JST),
-        datetime.datetime(2021, 12, 27, 4, 59, tzinfo=JST),
-        "有馬記念",
-        order_lte=1,
-    )
-)
-
-_add_compagin(
-    OncePerDayCampaign(
-        datetime.datetime(2021, 12, 27, 5, 0, tzinfo=JST),
-        datetime.datetime(2021, 12, 29, 4, 59, tzinfo=JST),
-        "ホープフルステークス",
-        order_lte=1,
-    ),
-)
-
-
+# https://dmg.umamusume.jp/news/detail/?id=616
+# GIキャンペーン
 _add_compagin(
     OneTimeCampaign(
-        datetime.datetime(2021, 12, 13, 5, 0, tzinfo=JST),
-        datetime.datetime(2021, 12, 20, 4, 59, tzinfo=JST),
-        "朝日杯フューチュリティステークス",
+        datetime.datetime(2022, 2, 14, 11, 0, tzinfo=JST),
+        datetime.datetime(2022, 2, 21, 3, 59, tzinfo=JST),
+        "東海ステークス",
         order_lte=1,
     ),
 )
 
 _add_compagin(
     OneTimeCampaign(
-        datetime.datetime(2021, 12, 20, 5, 0, tzinfo=JST),
-        datetime.datetime(2021, 12, 27, 4, 59, tzinfo=JST),
-        "有馬記念",
+        datetime.datetime(2022, 2, 14, 11, 0, tzinfo=JST),
+        datetime.datetime(2022, 2, 21, 3, 59, tzinfo=JST),
+        "根岸ステークス",
         order_lte=1,
     ),
 )
 
-
 _add_compagin(
     OneTimeCampaign(
-        datetime.datetime(2021, 12, 27, 5, 0, tzinfo=JST),
-        datetime.datetime(2021, 12, 29, 4, 59, tzinfo=JST),
-        "ホープフルステークス",
+        datetime.datetime(2022, 2, 14, 11, 0, tzinfo=JST),
+        datetime.datetime(2022, 2, 21, 3, 59, tzinfo=JST),
+        "フェブラリーステークス",
         order_lte=1,
     ),
 )

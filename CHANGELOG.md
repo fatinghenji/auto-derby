@@ -2,6 +2,51 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.15.4](https://github.com/NateScarlet/auto-derby/compare/v1.15.3...v1.15.4) (2022-02-18)
+
+### Bug Fixes
+
+- last_screenshot corrupt ([c3a2289](https://github.com/NateScarlet/auto-derby/commit/c3a2289054f569dfdf8e20deae36894b63859774)), closes [#235](https://github.com/NateScarlet/auto-derby/issues/235)
+- **single-mode:** update templates ([ed22a30](https://github.com/NateScarlet/auto-derby/commit/ed22a30e1102cac79e6bda8e0db97130288fc7f3)), closes [#232](https://github.com/NateScarlet/auto-derby/issues/232) [#233](https://github.com/NateScarlet/auto-derby/issues/233) [#234](https://github.com/NateScarlet/auto-derby/issues/234)
+
+## [1.15.3](https://github.com/NateScarlet/auto-derby/compare/v1.15.2...v1.15.3) (2022-02-14)
+
+### Bug Fixes
+
+- **plugin:** race_campaign: update data ([29ebb51](https://github.com/NateScarlet/auto-derby/commit/29ebb5182c30dbc9c3fa2a968683c34b92100115))
+
+## [1.15.2](https://github.com/NateScarlet/auto-derby/compare/v1.15.1...v1.15.2) (2022-02-13)
+
+## [1.15.1](https://github.com/NateScarlet/auto-derby/compare/v1.15.0...v1.15.1) (2022-02-13)
+
+### Bug Fixes
+
+- **single-mode:** update race data ([9e2746e](https://github.com/NateScarlet/auto-derby/commit/9e2746ed30fbe871b021e8d65a98f5bcedd52d0f))
+
+## [1.15.0](https://github.com/NateScarlet/auto-derby/compare/v1.14.1...v1.15.0) (2022-02-11)
+
+### Features
+
+- **team-race:** use short version ([226905b](https://github.com/NateScarlet/auto-derby/commit/226905b4a1026d75d52fff79688e916ed64e5587))
+
+## [1.14.1](https://github.com/NateScarlet/auto-derby/compare/v1.14.0...v1.14.1) (2022-02-09)
+
+### Bug Fixes
+
+- wrong return value of RaceResult.is_current ([383f926](https://github.com/NateScarlet/auto-derby/commit/383f926abd47d170b46073835ae20ba85c3a27cb))
+
+## [1.14.0](https://github.com/NateScarlet/auto-derby/compare/v1.13.7...v1.14.0) (2022-02-09)
+
+### Features
+
+- **plugin:** add `example_tamamo_cross` plugin ([fe4e12b](https://github.com/NateScarlet/auto-derby/commit/fe4e12bab52ae0e5d7eb9294ab4522385fd93219))
+
+## [1.13.7](https://github.com/NateScarlet/auto-derby/compare/v1.13.6...v1.13.7) (2022-01-07)
+
+### Bug Fixes
+
+- **plugin:** race_campaign: update data ([d9d9a7e](https://github.com/NateScarlet/auto-derby/commit/d9d9a7e5a51deaedbe88188ec152ee52038a5048))
+
 ## [1.13.6](https://github.com/NateScarlet/auto-derby/compare/v1.13.5...v1.13.6) (2021-12-22)
 
 ### Bug Fixes
