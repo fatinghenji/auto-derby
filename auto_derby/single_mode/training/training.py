@@ -2,22 +2,18 @@
 # pyright: strict
 from __future__ import annotations
 
-import logging
-import os
+from copy import deepcopy
 from typing import Tuple
 
-import cast_unknown as cast
-import cv2
-import numpy as np
 from PIL.Image import Image
-from PIL.Image import fromarray as image_from_array
 
-from ... import imagetools, mathtools, ocr, template, templates
+from ...constants import TrainingType
 from ..context import Context
 from . import training_score
 from .globals import g
 from .partner import Partner
 
+<<<<<<< HEAD
 _LOGGER = logging.getLogger(__name__)
 
 
@@ -299,13 +295,15 @@ def _estimate_vitality(ctx: Context, trn: Training) -> float:
         return 0
     return vit_data[trn.type][trn.level - 1] / ctx.max_vitality
 
+=======
+>>>>>>> d95fa9d764f85eeb51025c0087f409db23c23671
 
 class Training:
-    TYPE_SPEED: int = 1
-    TYPE_STAMINA: int = 2
-    TYPE_POWER: int = 3
-    TYPE_GUTS: int = 4
-    TYPE_WISDOM: int = 5
+    TYPE_SPEED = TrainingType.SPEED
+    TYPE_STAMINA = TrainingType.STAMINA
+    TYPE_POWER = TrainingType.POWER
+    TYPE_GUTS = TrainingType.GUTS
+    TYPE_WISDOM = TrainingType.WISDOM
 
     ALL_TYPES = (
         TYPE_SPEED,
@@ -321,7 +319,7 @@ class Training:
 
     def __init__(self):
         self.level = 0
-        self.type = 0
+        self.type = TrainingType.UNKNOWN
 
         self.speed: int = 0
         self.stamina: int = 0
@@ -333,14 +331,51 @@ class Training:
         self._use_estimate_vitality = False
         self.failure_rate: float = 0.0
         self.confirm_position: Tuple[int, int] = (0, 0)
-        self.partners: Tuple[Partner, ...] = tuple()
+        self.partners: Tuple[Partner, ...] = ()
+
+    def __str__(self):
+
+        named_data = (
+            ("spd", self.speed),
+            ("sta", self.stamina),
+            ("pow", self.power),
+            ("gut", self.guts),
+            ("wis", self.wisdom),
+            ("ski", self.skill),
+        )
+        partner_text = ",".join(i.to_short_text() for i in self.partners)
+        return (
+            "Training<"
+            + (
+                "".join(
+                    (
+                        f"{name}={value} "
+                        for name, value in sorted(
+                            named_data, key=lambda x: x[1], reverse=True
+                        )
+                        if value
+                    )
+                )
+                + (f"vit={self.vitality*100:.1f}% ")
+                + (f"fail={self.failure_rate*100:.0f}% ")
+                + f"lv={self.level} "
+                + (f"ptn={partner_text} " if partner_text else "")
+            ).strip()
+            + ">"
+        )
+
+    def clone(self):
+        return deepcopy(self)
+
+    def score(self, ctx: Context) -> float:
+        return training_score.compute(ctx, self)
 
     @classmethod
     def from_training_scene(
         cls,
         img: Image,
     ) -> Training:
-        # TODO: remove old api at next major version
+        # TODO: remove deprecated method at next major version
         import warnings
 
         warnings.warn(
@@ -357,130 +392,16 @@ class Training:
         ctx: Context,
         img: Image,
     ) -> Training:
+        # TODO: remove deprecated method at next major version
+        import warnings
 
-        if g.image_path:
-            image_id = imagetools.md5(
-                imagetools.cv_image(img.convert("RGB")),
-                save_path=g.image_path,
-                save_mode="RGB",
-            )
-            _LOGGER.debug("from_training_scene: image=%s", image_id)
-        rp = mathtools.ResizeProxy(img.width)
-
-        self = cls.new()
-        self.confirm_position = next(
-            template.match(
-                img,
-                template.Specification(
-                    templates.SINGLE_MODE_TRAINING_CONFIRM, threshold=0.8
-                ),
-            )
-        )[1]
-        radius = rp.vector(30, 540)
-        for t, center in zip(
-            Training.ALL_TYPES,
-            (
-                rp.vector2((78, 850), 540),
-                rp.vector2((171, 850), 540),
-                rp.vector2((268, 850), 540),
-                rp.vector2((367, 850), 540),
-                rp.vector2((461, 850), 540),
-            ),
-        ):
-            if mathtools.distance(self.confirm_position, center) < radius:
-                self.type = t
-                break
-        else:
-            raise ValueError(
-                "unknown type for confirm position: %s" % self.confirm_position
-            )
-
-        self.level = _recognize_level(
-            tuple(cast.list_(img.getpixel(rp.vector2((10, 200), 540)), int))
+        warnings.warn(
+            "use TrainingScene.recognize instead",
+            DeprecationWarning,
         )
+        from ...scenes.single_mode.training import _recognize_training  # type: ignore
 
-        bbox_group = {
-            ctx.SCENARIO_URA: (
-                rp.vector4((18, 503, 91, 532), 466),
-                rp.vector4((91, 503, 163, 532), 466),
-                rp.vector4((163, 503, 237, 532), 466),
-                rp.vector4((237, 503, 309, 532), 466),
-                rp.vector4((309, 503, 382, 532), 466),
-                rp.vector4((387, 503, 450, 532), 466),
-            ),
-            ctx.SCENARIO_AOHARU: (
-                rp.vector4((18, 597, 104, 625), 540),
-                rp.vector4((104, 597, 190, 625), 540),
-                rp.vector4((190, 597, 273, 625), 540),
-                rp.vector4((273, 597, 358, 625), 540),
-                rp.vector4((358, 597, 441, 625), 540),
-                rp.vector4((448, 597, 521, 625), 540),
-            ),
-        }[ctx.scenario]
-
-        self.speed = _ocr_training_effect(img.crop(bbox_group[0]))
-        self.stamina = _ocr_training_effect(img.crop(bbox_group[1]))
-        self.power = _ocr_training_effect(img.crop(bbox_group[2]))
-        self.guts = _ocr_training_effect(img.crop(bbox_group[3]))
-        self.wisdom = _ocr_training_effect(img.crop(bbox_group[4]))
-        self.skill = _ocr_training_effect(img.crop(bbox_group[5]))
-
-        extra_bbox_group = {
-            ctx.SCENARIO_AOHARU: (
-                rp.vector4((18, 570, 104, 595), 540),
-                rp.vector4((104, 570, 190, 595), 540),
-                rp.vector4((190, 570, 273, 595), 540),
-                rp.vector4((273, 570, 358, 595), 540),
-                rp.vector4((358, 570, 441, 595), 540),
-                rp.vector4((448, 570, 521, 595), 540),
-            )
-        }.get(ctx.scenario)
-        if extra_bbox_group:
-            self.speed += _ocr_red_training_effect(img.crop(extra_bbox_group[0]))
-            self.stamina += _ocr_red_training_effect(img.crop(extra_bbox_group[1]))
-            self.power += _ocr_red_training_effect(img.crop(extra_bbox_group[2]))
-            self.guts += _ocr_red_training_effect(img.crop(extra_bbox_group[3]))
-            self.wisdom += _ocr_red_training_effect(img.crop(extra_bbox_group[4]))
-            self.skill += _ocr_red_training_effect(img.crop(extra_bbox_group[5]))
-
-        # TODO: recognize vitality
-        self._use_estimate_vitality = True
-        self.failure_rate = _recognize_failure_rate(rp, self, img)
-        self.partners = tuple(Partner.from_training_scene_v2(ctx, img))
-        return self
-
-    def __str__(self):
-
-        named_data = (
-            ("spd", self.speed),
-            ("sta", self.stamina),
-            ("pow", self.power),
-            ("gut", self.guts),
-            ("wis", self.wisdom),
-            ("ski", self.skill),
-        )
-        partner_text = ",".join(i.to_short_text() for i in self.partners)
-        return (
-            "Training<"
-            f"lv={self.level} "
-            + (f"fail={int(self.failure_rate*100)}% ")
-            + " ".join(
-                (
-                    f"{name}={value}"
-                    for name, value in sorted(
-                        named_data, key=lambda x: x[1], reverse=True
-                    )
-                    if value
-                )
-            )
-            + (f" ptn={partner_text}" if partner_text else "")
-            + ">"
-        )
-
-    def score(self, ctx: Context) -> float:
-        if self._use_estimate_vitality:
-            self.vitality = _estimate_vitality(ctx, self)
-        return training_score.compute(ctx, self)
+        return _recognize_training(ctx, img)
 
 
 g.training_class = Training

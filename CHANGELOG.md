@@ -2,6 +2,72 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## [1.17.6](https://github.com/NateScarlet/auto-derby/compare/v1.17.5...v1.17.6) (2022-03-24)
+
+### Bug Fixes
+
+- wrong training length assertion ([ba20354](https://github.com/NateScarlet/auto-derby/commit/ba203545aac55064d16a166da8e924b26e850e97))
+
+## [1.17.5](https://github.com/NateScarlet/auto-derby/compare/v1.17.4...v1.17.5) (2022-03-24)
+
+### Bug Fixes
+
+- **single-mode:** handle locked training ([5ed76e4](https://github.com/NateScarlet/auto-derby/commit/5ed76e4e19002ff70eb75180fe0e6a39009bf454))
+
+## [1.17.4](https://github.com/NateScarlet/auto-derby/compare/v1.17.3...v1.17.4) (2022-03-23)
+
+### Bug Fixes
+
+- invalid syntax in `__version__.py` ([459a223](https://github.com/NateScarlet/auto-derby/commit/459a2231db8a02263cb5c942da8a14a74fb68b59))
+
+## [1.17.3](https://github.com/NateScarlet/auto-derby/compare/v1.17.2...v1.17.3) (2022-03-23)
+
+### Bug Fixes
+
+- **single-mode:** wrong effect summary for "健康祈願のお守り" ([6cceec8](https://github.com/NateScarlet/auto-derby/commit/6cceec8b749ecf1b7c68b6c2ddac0ab627ffcb14))
+
+## [1.17.2](https://github.com/NateScarlet/auto-derby/compare/v1.17.1...v1.17.2) (2022-03-22)
+
+### Bug Fixes
+
+- **single-mode:** error while recognizing command scene ([671c68b](https://github.com/NateScarlet/auto-derby/commit/671c68bb7e26a582b09afba961918cf62ecd9989)), closes [#266](https://github.com/NateScarlet/auto-derby/issues/266)
+
+## [1.17.1](https://github.com/NateScarlet/auto-derby/compare/v1.17.0...v1.17.1) (2022-03-21)
+
+### Bug Fixes
+
+- **plugin:** race_campaign: update data ([e3b8ab8](https://github.com/NateScarlet/auto-derby/commit/e3b8ab87768b6de20d6a3bd23954725ff8082851))
+- **web:** should ignore system mimetype setting for javascript ([6ed97bf](https://github.com/NateScarlet/auto-derby/commit/6ed97bfdd69e037847fd8273a75f5891ccc41a91)), closes [#265](https://github.com/NateScarlet/auto-derby/issues/265)
+
+### Performance
+
+- **single-mode:** improve item plan algorithm ([d9aaab5](https://github.com/NateScarlet/auto-derby/commit/d9aaab5a49520fc529d26d73f04ad2cc7007e0d3))
+
+## [1.17.0](https://github.com/NateScarlet/auto-derby/compare/v1.16.0...v1.17.0) (2022-03-20)
+
+### Features
+
+- **daily-race:** select topmost cleared race ([f88ba95](https://github.com/NateScarlet/auto-derby/commit/f88ba95c940be3396f0e49a7ba08b1a2acb4a039)), closes [#249](https://github.com/NateScarlet/auto-derby/issues/249) [#34](https://github.com/NateScarlet/auto-derby/issues/34)
+- **web:** add browser check ([2333f36](https://github.com/NateScarlet/auto-derby/commit/2333f364d926ac17177e9b7e0196b7d9bf12b4d4))
+
+### Bug Fixes
+
+- **limited-sale:** swipe may cause click on exchange button ([4e30647](https://github.com/NateScarlet/auto-derby/commit/4e306476e8fbfc7a42eeb4a2f216f3d0184ba3b1))
+- **single-mode:** error while recognizing go out menu ([57e7c4b](https://github.com/NateScarlet/auto-derby/commit/57e7c4bd00fd94b54c9bf251d93483bce3baa9ce))
+
+## [1.16.0](https://github.com/NateScarlet/auto-derby/compare/v1.15.4...v1.16.0) (2022-03-19)
+
+### Features
+
+- **plugin:** support custom client ([b5e130b](https://github.com/NateScarlet/auto-derby/commit/b5e130bac0ea286f69be4e9dc49069e3f009dab4)), closes [#262](https://github.com/NateScarlet/auto-derby/issues/262)
+- **single-mode:** support scenario "Make a new track!! ～クライマックス開幕～" ([bba8874](https://github.com/NateScarlet/auto-derby/commit/bba88748bdf75f5f93c9af91f0f1bef3c3c6da9b)), closes [#247](https://github.com/NateScarlet/auto-derby/issues/247)
+
+### Bug Fixes
+
+- **single-mode:** error while recognizing aoharu training ([09d933d](https://github.com/NateScarlet/auto-derby/commit/09d933d6a05241a4f28b56f2988395ed7c242d78)), closes [#244](https://github.com/NateScarlet/auto-derby/issues/244)
+- **single-mode:** update race data ([ef90d85](https://github.com/NateScarlet/auto-derby/commit/ef90d8557893f760dcc4c8aaa32ed36e8e300e33))
+- **single-mode:** update template ([#242](https://github.com/NateScarlet/auto-derby/issues/242)) ([781e860](https://github.com/NateScarlet/auto-derby/commit/781e860b06b9686e56feab115d2212251cd99d10))
+
 ## [1.15.4](https://github.com/NateScarlet/auto-derby/compare/v1.15.3...v1.15.4) (2022-02-18)
 
 ### Bug Fixes
